@@ -1,0 +1,7 @@
+=======================================
+======    VIRGO API ver 5.1.1    ======
+======     data: 2018-11-23      ======
+=======================================
+
+	- dodano wsparcie dla dokumentów w ofertach
+	- dodano wsparcie i obsługę dla Wirtualnych Wizyt

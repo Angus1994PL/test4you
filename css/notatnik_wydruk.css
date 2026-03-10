@@ -1,0 +1,28 @@
+div.WydrukNotatnikNaglowek
+{
+
+}
+div.WydrukNotatnik .Cena
+{
+
+}
+div.WydrukNotatnik table.WydrukNotatnikTabela
+{
+     width: 100%;
+}
+div.WydrukNotatnik table.WydrukNotatnikTabela th
+{
+     background: red;
+     color: #FFFFFF;
+     font-weight: bold;
+}
+div.WydrukNotatnik table.WydrukNotatnikTabela tr.WierszNieparzysty td
+{
+     background: #FFFFFF;
+     color: #333333;
+}
+div.WydrukNotatnik table.WydrukNotatnikTabela tr.WierszParzysty td
+{
+     background: #BBBBBB;
+     color: #333333;
+}

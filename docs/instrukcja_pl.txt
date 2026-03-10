@@ -1,0 +1,523 @@
+VIRGO API ver 5.0
+
+Spis treœci:
+1. Wstêp
+2. Wymagania
+3. Przygotowanie do instalacji
+ 3.1 Opis dodatkowych parametrów w pliku config.php
+4. Instalacja
+ 4.1 Aktualizacja do najnow¿szej wersji
+ 4.2 Kompatybilnoœæ z wersj¹ 4.0
+5. Korzystanie z API
+ 5.1 Modu³ web_api (CMS)
+ 5.2 Modu³ virgo_api (oferty, inwestycje)
+ 5.3 Obs³uga w³aœciwoœci oferty
+ 5.4 Obs³uga zdjêæ
+ 5.5 Obs³uga flash
+ 5.6 Obs³uga opcji
+ 5.7 Obs³uga jêzyków
+ 5.8 Obs³uga metod do pobierania list, klasa RefreshEventArgs
+6. Aktualizowanie danych
+7. Uwagi
+
+1. Wstêp
+
+VIRGO API jest w pe³ni obiektow¹ bibliotek¹ napisan¹ w PHP, dziêki której mo¿na zbudowaæ stronê WWW opart¹ na techologii PHP, 
+wyœwietlaj¹c¹ oferty oraz inwestycje pobrane z programu GALACTICA VIRGO. 
+Ponadto daje mo¿liwoœæ zbudowania strony w oparciu o elementy CMS równie¿ znajduj¹ce siê w GALACTICA VIRGO, takie jak: artyku³y, menu, banery.
+Wersja 4.0 zosta³a zoptymalizowana pod k¹tem wykorzystania zasobów serwera a tak¿e skrócenia czasu synchronizacji, 
+poprawiono drobne b³êdy, oraz dodano wiele nowych pól, funkcji i metod.
+
+2. Wymagania
+
+Niezbêdne do poprawnego dzia³ania API potrzebne s¹ nastêpuj¹ce elementy:
+
+	- serwer www z obs³ug¹ PHP 5.6 lub wy¿szej (np. konto w nazwa.pl)
+	
+	- dostêp do bazy danych MariaDB (niestety z braku zainteresowania zrezygnowaliœmy z wspierania bazy PostgreSQL)
+	
+	- PHP musi mieæ w³¹czon¹ obs³ugê SOAP oraz ZIP
+
+3. Przygotowanie do instalacji
+
+Pierwszym krokiem jest skopiowanie katalogu VirgoAPI do folderu ze stron¹. W zale¿noœci od zastosowanej technologii tworzenia strony jak i wykorzystania dostêpnych framework'ów, 
+folder VirgoApiPHP5 nale¿y umieœciæ w innych podfolderach strony. Nasze API testowaliœmy z wykorzystaniem SMART'ów oraz framework'u CodeIgniter. 
+Nastêpnie, przed przyst¹pieniem do instalacji, nale¿y prawid³owo skonfigurowaæ ustawienia zapisane w 
+pliku config.php (znajduje siê on w katalogu /web_api).
+Poni¿ej znajduje siê lista wszystkich parametrów niezbêdnych do uruchomienia API:
+
+	- $Moduly - okreœla z jakich modu³ów, oprócz modulu CMS (WEB), bedzie korzystaæ strona. W przypadku Virgo API wartoœæ zmiennej powinna byæ nastêpuj¹ca: 
+
+		public static $Moduly = array("virgo_api" => true);
+
+	- $WebServiceUrl - adres WebService'a aplikacji Galactica VIRGO, udostêpniaj¹cego oferty
+	
+	- $WebKey - klucz dostêpu do WebService'a, klucz nale¿y uzyskaæ od administratora aplikacji VIRGO
+	UWAGA! W poprzednich wersjach api klucz ten nazywa³ siê $VirgoKey. Z uwagi na podzia³ API na modu³y, zmieniona zosta³a tylko nazwa zmiennej, funkcjonalnoœæ pozosta³a taka sama.
+	
+	- $Driver - okreœla sterownik bazy danych, dostêpna jest tylko jest tylko jedna mo¿liwoœæ: DRIVER_MYSQL
+	
+	- $Server - adres serwera bazy danych
+	
+	- $DbName - nazwa bazy danych
+	
+	- $UserName - nazwa u¿ytkownika w bazie danych
+	
+	- $Password - has³o u¿ytkownika
+	
+	- $AppPath - œcie¿ka do folderu w którym znajduje siê strona, w praktyce u¿ywane podczas testów, na potrzeby podpinania zdjêæ,
+		gdy adres strony wygl¹da mniej wiêcej tak: localhost/test/index.php, w tej sytuacji wartoœæ
+		parametru bêdzie "/test". Na docelowym adresie (np.: www.domena.pl) parametr ten musi byæ pusty.
+
+3.1 Opis dodatkowych parametrów w pliku config.php
+
+Dodatkowe ustawienia dostêpne w pliku config.php:
+
+	- $Version - okreœla czy bêdziemy korzystaæ z modu³u CMS, dostêpne s¹ dwie mo¿liwoœci: VERSION_STANDARD (dostêp tylko do ofert i inwestycji) oraz VERSION_EXTENDED (dostêp do CMS aktywny)
+
+	- $Framework - okreœla czy bêdziemy korzystaæ z framework'a CodeIgniter czy nie, dostêpne dwie mo¿liwoœci: FRAMEWORK_DEFAULT oraz FRAMEWORK_CODEIGNITER (ustawienie tej opcji powoduje jedynie za³o¿enie niezbêdnych tabel w bazie, których wymaga CI)
+
+	- $NoPhotoPath - œcie¿ka do pliku z grafik¹ wyœwietlan¹ w sytuacji braku zdjêcia dla oferty, grafika zastêpcza, domyœlnie "images/no_photo.gif"
+
+	- $PaginatorRange - okreœla ile stron z wynikami wyszukiwarce ofert ma byæ prezentowanych "przed" jak i "po" aktualnie wyœwietlanej stronie z wynikami, domyœlnie 3
+
+	- $DataSynchronizationInterval - parametr okreœlaj¹cy co ile sekund (minimum) wykonywaæ synchronizacjê ofert z serwerem
+
+	- $UseSajaxToSynchronize - flaga okreœlaj¹ca czy do synchronizacji wykorzystaæ bibliotekê Sajax, a tym samym czy synchronizacja ma siê odbywaæ w sposób asynchroniczny, domyœlnie ustawione na true, w œrodowisku produkcyjnym nie zaleca siê wy³¹czania tej funkcji
+
+	- $SaveErrorToDataBase - flaga okreœlaj¹ca czy zapisywaæ do bazy danych, do tabeli errors, informacje o b³êdach, które wyst¹pi³y podczas komunikacji z serwerem
+
+	- $ShowErrors - flaga okreœlaj¹ca czy pokazywaæ b³êdy (opisane powy¿ej) na stronie, pokazywanie nastêpuje poprzez wywo³anie instrukcji echo
+
+Opcje wykorzystywane w module CMS:
+
+	- $WebGID - wartoœæ GID serwisu strony
+	
+	- $UseOptionsDiskCache - flaga okreœlaj¹ca czy API ma korzystaæ z dyskowego cache'u dla opcji, w³¹czenie tej opcji poprawia wydajnoœæ
+	
+	- $UseLanguageDiskCache - flaga okreœlaj¹ca czy API ma korzystaæ z dyskowego cache'u dla jezyków, w³¹czenie tej opcji poprawia wydajnoœæ
+	
+Opcje zwi¹zane z wysy³k¹ wiadomoœci e-mail:
+
+	- $MailServerHost - adres serwera poczty
+
+	- $MailServerPort - port serwera poczty
+
+	- $MailUser - login u¿ytkownika poczty
+
+	- $MailPassword - has³o u¿ytkownika poczty
+
+	- $MailFromAddress - adres jaki ma siê wstawiaæ w pole "Od"
+
+	- $MailFromName - nazwa jaka ma siê wstawiaæ w pole "Od"
+
+4. Instalacja
+
+Po skonfigurowaniu pliku config.php, nale¿y uruchomiæ skrypt instalacyjny install_db.php.
+Œcie¿ka do pliku jest nastepuj¹ca /install_db.php (o ile nie zosta³ nazwany inaczej).
+Wywo³anie powinno wygl¹daæ mniej wiêc tak:
+http://www.twoja-domena.pl/install_db.php
+Skrypt nie powinien zg³osiæ ¿adnych b³êdów. Jeœli takie wyst¹pi¹, nale¿y sprawdziæ ustawienia w pliku config.php, i ponownie uruchomiæ skrypt.
+Po zainstalowaniu nale¿y w folderze strony utworzyæ folder o nazwie "photos", w którym bêd¹ zapisywane zdjêcia ofert.
+
+4.1 Aktualizacja Virgo API do wersji 5.0
+W sytuacji gdy ju¿ korzystaliœmy z API i aktualizujemy je do nowej wersji, rownie¿ nale¿y wykonaæ nastêpuj¹ce czynnoœci:
+
+	- skopiowaæ zawartoœæ katalogu VirgoAPI do folderu ze stron¹ (tam gdzie by³a zainstalowana popraednia wersja API). Aby zachowaæ przejrzystoœc struktury plików, warto wczeœniej usun¹æ 
+	katalog virgo_api ze strony, na której wykonujemy aktualizacjê. Nale¿y pamiêtaæ, ¿e w wersjach wczeœniejszych, w katalogu virgo_api znajdowa³ siê plik konfiguracyjny API. Najlepiej 
+	skopiowaæ sobie go w bezpieczne miejsce, aby nie straciæ danych dostêpowych do API.
+	
+	- po skopiowaniu plików, nale¿y skonfigurowaæ plik config.php, który od tej wersji znajdowaæ bêdzie siê w katalogu '/web_api' (/web_api/config.php). Mo¿na u¿yæ ówczeœniej skopiowanego pliku config.php
+	z katalogu /virgo_api, albo zmodyfikowaæ ju¿ istniej¹cy plik config.php (/web_api/config.php) o dane dostêpowe przypisane do danej strony.
+	
+	UWAGA! Dok³adny opis konfiguracji pliku config.php znajduje siê w punkcie 3 ('Przygotowanie do instalacji').
+	
+	- uruchomiæ skrypt /web_api/install_db.php. 
+
+4.2 Kompatybilnoœæ z poprzednimi wersjami Virgo API
+
+Ze wzglêdu na zmiany w strukturze danych oraz znacznemu ich rozbudowaniu, wersja 5.0 nie jest kompatybilne z wczeœniejszymi wersjami.
+W celu przejœcia na now¹ wersjê nale¿y wykonaæ nastêpuj¹ce czynnoœci:
+
+	- wykonaæ backup bazy danych i plików
+	
+	- jeœli aktualizowana wersja API jest starsza ni¿ 4.0, to z bazy danych nale¿y usun¹æ nastêpuj¹ce tabele: departments, agents, investments, investments_buildings, offers, properties, offers_properties, offers_photos, offers_rooms, offers_rooms_sets, errors, settings
+	
+	- w przypadku gdy  aktualizowana wersja API jest wersj¹ 4.0 lub nowsz¹ powy¿szy zabieg nie jest konieczny
+	
+	- wgraæ pliki z now¹ wersj¹
+	
+	- skonfigurowaæ plik config.php
+	
+	- wykonaæ instalacjê, tj. uruchomienie skryptu /web_api/install_db.php
+
+Po wykonaniu powy¿szych czynnoœci nale¿y sprawdziæ czy strona dzia³a prawid³owo (póki co bez ofert).
+Skontaktowaæ siê z serwisem GALACTICA w celu wykonania resetu API.
+
+UWAGA! Przed aktualizacj¹ strony, radzimy uruchomienie wersji testowej, na której bêdziemy mieli mo¿liwoœæ zweryfikowania czy wszystko siê uda³o i dzia³a prawid³owo.
+
+5. Korzystanie z API
+
+Korzystanie z API jest bardzo ³atwe. Na samym pocz¹tku nale¿y ustawiæ folder w którym znajduje siê API:
+	define("VIRGO_API_DIR", "VirgoAPI");
+Domyœlny folder to "virgo_api". Nastêpnie nale¿y podpi¹æ bibliotekê:
+	require_once("VirgoAPI/virgo_api.php");
+Wszystkie niezbêdne metody i funkcje zgromadzone s¹ w jednej klasie. 
+Korzystanie z API zaczynamy od utworzenia instancji obiektu tej klasy:
+	$api = new VirgoAPI();
+	
+5.1 Modu³ web_api (CMS)
+
+	- GetAgent($id)
+		pobiera obiekt agenta po podanym ID
+
+	- SaveParam($key, $value)
+		zapisuje parametr serwisu do bazy
+		
+	- LoadParam($key, $defValue = null)
+		pobiera parametr serwisu
+		
+	- GetAvailableLanguages()
+		zwraca liste uzywanych jezykow
+		
+	- GetApplicationAddress()
+		zwraca adres aplikacji zdefiniowany w config.php API
+		
+	- AddMailToNewsLetter($mail)  //dla CMS Galactica
+		zapisuje adres e-mail do zdefinoiwanego newslettera w aplikacji Galactica
+		
+	- HasNewsLetter()  //dla CMS Galactica
+		sprawdza czy dla strony jest zdefiniowany newsletter
+		
+	- RemoveMailFromNewsLetter($mail)  //dla CMS Galactica
+		usuwa adres e-mail z newslettera
+		
+	- ConfirmNewsLetterMail($id, $hash)  //dla CMS Galactica
+		potwierdzenie adresu email podczas rejestrowania do newslettera
+		
+	- SynchronizeGalerie()  //dla CMS Galactica
+		synchronizuje wszystkie galerie z modu³u WEB
+
+	- SynchronizeSite()  //dla CMS Galactica
+		synchronizuje wszystkie elementy modu³u CMS, najpierw je kasuj¹c
+		
+	- SynchronizeGraphics()  //dla CMS Galactica
+		synchronizuje wszystkie grafiki z serwera VIRGO (grafika katalog)
+		
+	- SynchronizeSiteElement($element, $gid, $del)  //dla CMS Galactica
+		synchronizuje wskazany element o podanym gid'zie, jeœli parametr $del bêdzie TRUE, nast¹pi usuniêcie wskazanego elementu
+		lista dostêpnych wartoœci dla parametru $element:
+		SITE_ELEMENT_SERWIS
+		SITE_ELEMENT_MIEJSCE_SERWISU
+		SITE_ELEMENT_MIEJSCE_MENU
+		SITE_ELEMENT_MIEJSCE_GRUP
+		SITE_ELEMENT_MENU
+		SITE_ELEMENT_ARTYKUL
+		SITE_ELEMENT_ARKUSZ_CSS
+		SITE_ELEMENT_ARKUSZ_JS
+		SITE_ELEMENT_BANER
+		SITE_ELEMENT_GRAFIKA
+		
+	- ClearOptionsCache()
+		czyœci dyskowy cache opcji i tworzy go na nowo
+		
+	- ClearLanguageCache()
+		czyœci dyskowy cache jêzyków i tworzy go na nowo
+		
+	- GetSerwis()
+		zwraca obiekt Serwisu pobrany wg wartoœci opcji $WebGID z pliku config.php
+		
+	- GetAgentDepartmentPhoto($objId, $customSize, $photoType, $version)
+		zwraca scie¿kê do pliku ze zdjêciem agenta lub oddzia³u
+		
+	- GetPdfFromUrl($url)
+		zwraca plik pdf wygenerowany z podanego adresu
+		
+	- readPageVisitCounter()
+		zwraca iloœæ wyswietlen strony
+		
+	- setPageVisitCounter($value=0)
+		ustawia iloœæ wyœwietleñ strony
+
+	- increasePageVisitCounter()
+		zwiêksza iloœæ wyœwietleñ strony o 1
+		
+	- IsSmsGatewayActive()  //dla CMS Galactica
+		sprawdza czy jest w³¹czona us³uga sms
+		
+	- SendSms($tresc, $numer)  //dla CMS Galactica
+		wysy³a sms o ile us³uga sms jest zdefiniowana dla wybranej strony
+		
+	- GetGrafikaPath($fileName)
+		zwraca œciê¿kê do pliku grafiki, jak plik nie istnieje zwraca FALSE
+
+Pozosta³e metody dla modu³u CMS, dostêpne bezpoœrednio z nastêpuj¹cych klas (opisane w klasach):
+	- Serwisy:
+		- GetSerwis($gid, $idLng = 1045)
+		- PobierzSerwisJezykGID($idLng)
+		- PobierzJezykiSerwisow($serwisGID = null
+		- GetSerwisParametry(Serwis $serwis)
+	- Artykuly:
+		- GetArtykul($gid, $idLng = 1045)
+		- PobierzArtykulJezyk($gid_artykulu, $id_jezyka = 1045, $gid_miejsca_serwisu = 0, $gid_grupy_serwisu = 0, $str_parametr = "")
+		- PobierzArtykulPoTytule($tytul, $id_jezyka = 1045)
+		- PobierzArtykulDomyslny($id_jezyka)
+		- PobierzArtykulyJezykiWDolGrupySerwisu($gid_grupy_serwisu, $id_jezyka = 1045)
+		- PobierzMiejscaSerwisu($gid = false)
+		- PobierzArtykulyJezyki($ht = null, $strona = 0, $ile_na_strone = 0, $sort = "")
+		- PobierzArtykulyJezyki2($gid_miejsca_serwisu, $id_jezyka = 1045, $id_parametr = 0, $bez_gid = 0, $gid_grupy_serwisu = 0, $sort = "")
+		- PoliczArtykulyJezyki($ht = null)
+	- Menus:
+		- GetMenu($gid, $idLng = 1045)
+		- PobierzMenusyJezyki($ht = null, $czy_tylko_na_www = FALSE, $sort = "Lp,ASC")
+		- PobierzMenusyJezyki2($gid_miejsca_menu, $id_jezyka = 1045, $gid_grupy_serwisu = 0, $czy_tylko_na_www = FALSE)
+		- PobierzMiejscaMenu($gid = false)
+	- Miejsca:
+	rodzaje miejsc: MIEJSCE_RODZAJ_SERWISU, MIEJSCE_RODZAJ_MENU, MIEJSCE_RODZAJ_GRUPY
+		- GetMiejsce($gid, $rodzaj, $idLng = 1045)
+		- GetMiejsca(Miejsce $parent)
+		- GetChildGIDs($gid, $rodzaj, $idLng)
+		- PobierzGrupaSerwisuGID($gid, $idLng = 1045)
+		- PobierzGrupaSerwisu($str_nazwa, $idLng = 1045)
+		- PobierzMiejsceSerwisuGid($gid, $idLng = 1045)
+		- PobierzMiejscaSerwisu($ht, $idLng = 1045)
+		- PobierzMiejscaMenu($ht, $idLng = 1045)
+		- PobierzMiejsceMenuJezykGid($gid_miejsca_menu, $idLng = 1045)
+	- Banery:
+		- GetBaner($gid, $idLng = 1045)
+		- PobierzAktywneBaneryReklamoweJezyki($gid_grupy_serwisu = 0, $gid_miejsca_serwisu = 0, $id_jezyka = 1045)
+	- ArkuszeSkrypty:
+	rodzaje obiektów: ARKUSZ_RODZAJ_CSS, ARKUSZ_RODZAJ_JS
+		- GetArkuszSkrypt($gid, $rodzaj)
+		- PobierzArkusze($ht = null)
+		- PobierzSkrypty($ht = null)
+
+5.2 Modu³ virgo_api (oferty, inwestycje)
+
+Od tej chwili mamy do dyspozycji nastêpuj¹ce metody:
+
+	- GetOffers(RefreshEventArgs $args, $idLng)
+		pobiera listê ofert w danym jêzyku, uwzglêdniaj¹c filtrowanie i sortowanie
+		
+	- GetOffersForFirstPage(RefreshEventArgs $args, $idLng)
+		pobiera oferty na pierwsz¹ stronê w danyn jêzyku
+		
+	- GetMostPopularOffers($count, $idLng, $filters = null)
+		pobiera najbardziej popularne oferty pod wzglêdem iloœci ods³on w danym jêzyku, z mo¿liwoœci¹ wykorzystania dodatkowych filtrów (parametr $filters)
+		
+	- GetOffer($id, $lng = 1045)
+		pobiera obiekt oferty po podanym ID, dla danego jêzyka
+		
+	- GetOfferPhoto($id)
+		pobiera obiekt zdjêcia oferty po podanym ID
+		
+	- GetObjects()
+		zwraca listê przedmiotów ofert znajduj¹cych siê w bazie danych
+		
+	- GetProvinces($idLng = 1045)
+		zwraca listê unikalnych województw u¿ytych w ofertach w danym jêzyku
+		
+	- GetDistricts($province = null, $idLng = 1045)
+		zwraca listê unikalnych powiatów u¿ytych w ofertach w danym jêzyku, opcjonalnie dla podanego województwa
+		
+	- GetLocations($districts = null, $province = null, $idLng = 1045, $object = null, $rent = null)
+		zwraca listê unikalnych lokalizacji u¿ytych w ofertach w danym jêzyku, opcjonalnie dla: podanych powiatów (parametr $districts, jako tablica stringów), danego województwa ($province), danego przedmiotu oferty ($object), wynajmu lub sprzeda¿y ($rent)
+
+	- GetQuarters($locations = null, $idLng = 1045, $object = null, $rent = null)
+		zwraca listê unikalnych dzielnic u¿ytych w ofertach w danym jêzyku, opcjonalnie dla: podanych lokalizacji (parametr $locations, jako tablica stringów), danego przedmiotu oferty ($object), wynajmu lub sprzeda¿y ($rent)
+		
+	- GetRegions($quarters = null, $idLng = 1045)
+		zwraca listê unikalnych regionów u¿ytych w ofertach w danym jêzyku, opcjonalnie dla podanych dzielnic (parametr $quarters, jako tablica stringów)
+		
+	- GetBuildingTypes($idLng = 1045, $object="")
+		zwraca listê unikanych rodzajów budynków, dla mieszkañ i lokali w danym jêzyku
+		
+	- GetHouseTypes($idLng = 1045)
+		zwraca listê unikanych rodzajów domów w danym jêzyku
+		
+	- GetObjectTypes($idLng = 1045)
+		zwraca listê unikanych rodzajów obiektów w danym jêzyku
+		
+	- GetFieldDestiny($idLng = 1045)
+		zwraca listê unikanych przeznaczeñ dzia³ek w danym jêzyku
+		
+	- GetHallDestiny($idLng = 1045)
+		zwraca listê unikanych przeznaczeñ hali w danym jêzyku
+		
+	- GetPremisesDestiny($idLng = 1045)
+		zwraca listê unikanych przeznaczeñ lokali w danym jêzyku
+		
+	- GetOwnershipsStatus($idLng = 1045)
+		zwraca listê unikanych statusów w³¹snoœci w danym jêzyku
+		
+	- GetLegalStatus($idLng = 1045)
+		zwraca listê unikanych stanów prawnych w danym jêzyku
+		
+	- GetInvestments(RefreshEventArgs $args, $lng = 1045)
+		pobiera listê inwestycji w danym jêzyku, uwzglêdniaj¹c filtrowanie i sortowanie
+		
+	- GetInvestment($id)
+		pobiera obiekt inwestycji po podanym ID
+		
+	- GetInvestmentBuilding($id)
+		pobiera obiekt budynku inwestycji po podanym ID
+		
+	- GetInvestmentsProvinces()
+		zwraca listê unikalnych województw u¿ytych w inwestycjach
+		
+	- GetInvestmentsDistricts($province = null)
+		zwraca listê unikalnych powiatów u¿ytych w inwestycjach, opcjonalnie dla podanego województwa (parametr $province)
+		
+	- GetInvestmentsLocations($districts = null)
+		zwraca listê unikalnych lokalizacji u¿ytych w inwestycjach, opcjonalnie dla podanych powiatów (parametr $districts, jako tablica stringów)
+		
+	- GetInvestmentsQuarters($locations = null)
+		zwraca listê unikalnych dzielnic u¿ytych w inwestycjach, opcjonalnie dla podanych lokalizacji (parametr $locations, jako tablica stringów) 
+		
+	- GetInvestmentsRegions($quarters = null)
+		zwraca listê unikalnych regionów u¿ytych w inwestycjach, opcjonalnie dla podanych dzielnic (parametr $quarters, jako tablica stringów)
+		
+	- GetInvestmentsCategories()
+		zwraca listê unikanych kategorii inwestycji
+		
+	- GetSynchronizeJS()
+		zwraca kod odpowiedzialny za synhronizacjê bazy danych z aplikacj¹ VIRGO, 
+		synchronizacja odbywa siê co ustalony okres czasu, zdefiniowany w opcji $DataSynchronizationInterval (w sekundach),
+		UWAGA: jeœli opcja $UseSajaxToSynchronize jest ustawiona na TRUE (domyœlnie), synchronizacja bêdzie wykonywa³a siê 
+			asynchronicznie za pomoc¹ AJAXA, w przeciwnym wypadku synchronizacja wykona siê od razu. Jest to niezalecany tryb, 
+			ze wzglêdu na spowolnienie dzia³ania strony, a co za tym idzie oczekiwaniem klienta na za³adowanie siê strony.
+	- Reset()
+		s³u¿y do wykonania resetu ofert w API na serwerza, do jej wykonania nale¿y mieæ odpowiedi dostêp ustawiany na serwerze
+		
+	- GetOffersList($skipLogin = false)
+		s³u¿y do pobrania listy wszystkich ofert (tylko id i symbol oferty), które powinny znleœæ siê w VIRGO API, lista ta zapisuje siê w pliku offers.xml, do jej wykonania nale¿y mieæ odpowiedi dostêp ustawiany na serwerze
+
+	- GetContactFormAddress()
+		zwraca pe³n¹ œcie¿kê do formularza kontakowego, znajduj¹cego siê w aplikacji VIRGO
+		
+	- GetNewOfferFormAddress()
+		zwraca pe³n¹ œcie¿kê do formularza rejestracji nowej oferty, znajduj¹cego siê w aplikacji VIRGO
+		
+	- GetNewSearchFormAddress()
+		zwraca pe³n¹ œcie¿kê do formularza rejestracji nowego poszukiwania, znajduj¹cego siê w aplikacji VIRGO
+		
+	- GetContactPerOfferFormAddress($offerId)
+		zwraca pe³n¹ œcie¿kê do formularza rejestracji zainteresowania klienta dan¹ ofert¹, znajduj¹cego siê w aplikacji VIRGO
+
+	- SynchronizeSite()  //dla CMS Galactica
+		synchronizuje stronê uwzglêdniaj¹c parametry dotycz¹ce stricte modu³u virgo API
+		
+	- ClearPhotos($ideofe)
+		usuwa zdjêcia z oferty o podanym w parametrze id
+		
+5.3 Obs³uga w³aœciwoœci oferty
+
+Klasa Offer udostêpnia olbrzymi¹ liczbê w³aœciwoœci, których u¿ywa siê w nastêpuj¹cy sposób:
+
+	$offer->nazwa_wlaciwosci, np; $offer->Kraj daje dostêp do kraju. 
+	
+Pe³na lista dostêpnych w³aœciwoœci znajduje siê w tabeli "properties". Niektóre z w³aœciwoœci s¹ tablicami, szybkie wyœwietlenie wszystkich elementów
+mo¿liwe jest dziêki metodzie $offer->GetSetAsText($set). Zwraca ona wszystkie elementy wypisane po przecinku, np: $offer->GetSetAsText($offer->DodatkoweOplatyWCzynszu).
+Do obs³ugi atrybutów oferty s³u¿y metoda: 
+
+	$offer->Atrybut(nazwa_atrybuty)
+	
+Pozosta³e w³aœciwoœci oferty dostêpne s¹ jako odpowiednie metody klasy Offer.
+
+5.4 Obs³uga zdjêæ
+
+Zdjêcia pobierane s¹ z serwera w momencie kiedy s¹ potrzebne do wyœwietlenia. Po pobraniu s¹ zapisywane na dysku.
+Do pobierania zdjêc s³u¿y metoda GetImgSrc() klasy offer_photo:
+
+	GetImgSrc($customSize, $basicWatermark, $additionalWatermark, $kadruj = false)
+	
+Przyjmuje nastêpuj¹ce parametry:
+
+	- $customSize - dowolny rozmiar zdjêcia zawieraj¹cy informacje o szerokoœci i wysokoœci zdjêcia, zapisuje siê go w formacie "szer_wys", np.: 350_250
+	
+	- $basicWatermark - flaga okreœlaj¹ca czy do zdjêcia dokleiæ podstawowy znak wodny (tekst lub grafika, zaleznie od ustawieñ w aplikacji VIRGO)
+	
+	- $additionalWatermark - flaga okreœlaj¹ca czy do zdjêcia dokleiæ dodatkowe znaki wodne, takie jak: zero prowizji, rodzina na swoim (konfigurowane w aplikacji VIRGO)
+	
+	- $kadruj - flaga okreœlaj¹ca czy zdjêcia ma zostaæ wykadrowane czy dostosowane rozmiarem do podanych wymiarów
+
+Zdjêcia zostan¹ zapisane w folderze "photos" w folderze g³ównym strony, w odpowiednich podfolderach.
+
+Mechanizm pobierania i obs³ugi zdjêæ jest wspólny dla ofert i inwestycji. Zdjêcia ofert zapisywane s¹ w folderach photos/ofs_Y/offer_X a inwestycji w photos/investment_X, 
+gdzie Y oznacza 2 pierwsze cyfry z ID oferty, a X id oferty lub inwestycji.
+
+5.5 Obs³uga flash
+
+Prezentacje flash pobierane s¹ w podobny sposób jak zdjêcia, czyli w pe³ni automatycznie. Ró¿nica miêdzy zdjêciami, polaga na tym, ¿e podczas wyœwietlania oferty, nale¿y pobraæ wszystkie pliki SWF, ¿eby mo¿na by³o przechodziæ miêdzy pomieszczeniami w samej prezentacji. Dlatego nale¿y wywo³aæ dla ka¿dego obiektu OfferPhoto metodê DownloadSWF(), któa œci¹gnie plik na dysk, jeœli jeszcze go nie ma.
+W celu wyœwietlenia pliku SWF nale¿y skorzystaæ z metody GetSWFSrc(). Pliki zapisuj¹ siê w fodlerze oferty pod nazw¹ jaka jest zdefiniowana w VIRGO.
+
+5.6 Obs³uga opcji
+
+Opcje zawieraj¹ ustawienia/parametry aplikacji VIRGO oraz strony.
+Opcje pobierane s¹ z aplikacji VIRGO podczas synchronizowania ca³ego serwisu. Opcje mog¹ byæ zapisane jako jeden z trzech typów: 
+
+	- liczba
+	
+	- wartoœæ bitowa
+	
+	- ³añcuch znaków
+	
+Dostêp do nich odbywa siê w nastêpuj¹cy sposób:
+
+	- Opcje::OpcjaInt($key) dla liczb
+	
+	- Opcje::OpcjaBool($key) dla wartoœci bitowych
+	
+	- Opcje::OpcjaString($key) dla ³añcuchów znaków
+
+5.7 Obs³uga jêzyków
+
+Jêzyki zawieraj¹ wersje jêzykowe (t³umaczenia na inne jêzyki) zwrotów i okreœleñ u¿ywanych w aplikacji.
+Jêzyki pobierane s¹ z aplikacji VIRGO podczas synchronizowania ca³ego serwisu. 
+Dostêp do wartoœci jêzyków odbywa siê za pomoc¹ kluczy jêzykowych, u¿ywanych w nastêpuj¹cy sposób:
+	JezykiTeksty::Lng($key)
+	JezykiTeksty::Lng($key, 1031)
+
+5.8 Obs³uga metod do pobierania list, klasa RefreshEventArgs
+
+Klasa ta s³u¿y do przechowania parametrów i ustawieñ wykorzystywanych do zbudowania zapytania pobieraj¹cego dane z bazy danych, i
+wykorzystywana jest w ró¿nych miejscach, takich jak: pobranie listy ofert, inwestycji. S³u¿y tak¿e do zbudowania paginatora listy z wynikami.
+Konstruktor:
+
+	new RefreshEventArgs($pageSize, $actualPage, $filters = null, $sort = "")
+	
+gdzie:
+
+	$pageSize - okresla rozmiar strony z wynikami, jeœli 0 pobrane zostan¹ wszystkie rekordy
+	
+	$actualPage - numer bie¿¹cej strony z wynikami, zaczynaj¹c od 0
+	
+	$filters - tablica asocjacyjna zawieraj¹ca warunki filtracyjne, gdzie kluczem jest nazwa warunku, np: "Rent"=>1
+	
+	$sort - ³añcuch znaków okreœlaj¹cy sortowanie wyników, np: "price ASC"
+	
+Dostêpne metody:
+	- GetFirst() - zwraca numer pierwszej strony z wynikami
+	
+	- GetPrev() - zwraca numer poprzedniej strony z wynikami wzglêdem bie¿¹cej
+	
+	- GetNext() - zwraca numer nastêpnej strony z wynikami wzglêdem bie¿¹cej
+	
+	- GetLast() - zwraca numer ostatniej strony z wynikami
+	
+	- getActPage() - zwraca licznik z aktualnie wyœwietlanymi rekordami z wszystkich dostêpnych, np: "5 z 55"
+	
+	- GetPagesNumbers($range = 0) - zwraca tablice stron do pokazania na paginatorze, np. 3,4,5,6,7. Jeœli parametr $range = 0 wtedy bierze wartoœæ z opcji $PaginatorRange
+
+6. Aktualizowanie danych
+
+Aktualizacjê wykonuj¹ siê automatycznie, za pomoc¹ AJAXa, lub ka¿dorazowo po wejœciu na stronê. Ta druga metoda nie jest zalecana w wersji produkcyjnej, ze wzglêdu na zmniejszenie wydajnoœci.
+
+7. Uwagi
+
+Changelog Virgo API 5.0 znajduje sie w pliku /docs/zmiany_pl.txt
+
+
+Kontakt:
+kontakt@galactica.pl
+https://www.galactica.pl/
