@@ -1,0 +1,56 @@
+@CHARSET "UTF-8";
+
+body, input, select {font: 10px Verdana;}
+
+div.dvSearch {float: left;}
+div.dvSearch div.row {}
+div.dvSearch div.row div.cell {float: left; margin: 1px;}
+div.dvSearch div.row div.c1 {width: 150px;}
+div.dvSearch div.row div.c2 {width: 75px;}
+div.dvSearch div.row div.c3 {width: 100px;}
+div.dvSearch div.row div.c4 {width: 25px;}
+div.dvSearch div.row div.c5 {width: 100px;}
+div.dvSearch div.row div.c6 {width: 25px;}
+div.dvSearch div.row div.c23 {width: 175px;}
+div.dvSearch div.row div.c456 {width: 150px;}
+
+div.dvSearch select {width: 150px;}
+
+div.dvOffers {float: left;}
+div.dvOffers table.tbList td.img {border: 1px solid black; padding: 2px 2px 1px 2px;}
+div.dvOffers table.tbList td.img img {border: none;}
+div.dvOffers table.tbList td.tit {font-weight: bold;}
+div.dvOffers table.tbList td.gray {background-color: lightgrey;}
+div.dvOffers table.tbList td.key {width: 120px;}
+div.dvOffers table.tbList td.val {width: 120px; font-weight: bold; background-color: #CCC;}
+div.dvOffers table.tbList td.sort img {cursor: pointer;}
+
+div div.dvPages div.p {float: left; cursor: pointer; padding: 0px 1px 0px 1px;}
+div div.dvPages div.p img{padding-left: 3px; padding-right: 3px;}
+div div.dvPages div.ods {float: left; width: 10px;}
+
+div.dvOffer div.section {clear: both;}
+div.dvOffer div.section div.tit {width: 460px; background-color: #EEE; font-size: 13px; font-weight: bold; margin: 1px; border: 1px solid #CCC;}
+div.dvOffer div.section div.row {clear: both;}
+div.dvOffer div.section div.row div.key {float: left; background-color: #DDD; width: 200px; padding: 1px; margin: 1px;}
+div.dvOffer div.section div.row div.val {float: left; width: 250px; padding: 1px; margin: 1px;}
+div.dvOffer div.section div.row div.val2 {float: left; width: 450px; padding: 3px 6px 3px 6px; margin: 1px; text-align: justify;}
+div.dvOffer div.section a img {border: 1px solid #666;}
+div.dvOffer div.swf a img {border: 0px;}
+div.dvOffer div.section div.swfFile {float: left; text-align: center; margin: 1px 2px 2px 2px;}
+
+div.dvOffersSpecial {float: left; position: absolute; left: 650px;}
+div.dvOffersSpecial table.tbList td.img {border: 1px solid black; padding: 2px 2px 1px 2px;}
+div.dvOffersSpecial table.tbList td.img img {border: none;}
+div.dvOffersSpecial table.tbList td.tit {font-weight: bold;}
+div.dvOffersSpecial table.tbList td.gray {background-color: lightgrey;}
+div.dvOffersSpecial table.tbList td.key {width: 120px;}
+div.dvOffersSpecial table.tbList td.val {width: 120px; font-weight: bold; background-color: #CCC;}
+
+div.dvInfo {font: 12px Tahoma; color: #FF2E16; margin: 10px; padding: 3px; width: 1000px; border: 1px solid #8C8782;}
+
+.clear {clear: both;}
+.left {text-align: left;}
+.center {text-align: center;}
+.right {text-align: right;}
+.b {font-weight: bold;}

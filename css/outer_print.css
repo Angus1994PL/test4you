@@ -1,0 +1,499 @@
+html, body, form {margin: 0px; padding: 0px;}
+
+html, body {
+	background-color: #fff;
+	font-size: 12px;
+	font-family: Verdana;
+	color: #444;
+	text-align: center;
+}
+
+a img {border: 0px;}
+
+#wrapper {
+	position: relative;
+	width: 900px;
+	background-color: #fff;
+	padding: 10px;
+	margin-top: 10px;
+	margin-bottom: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	overflow: hidden;
+	text-align: left;
+}
+
+#header {
+	display: none;
+	visibility: hidden;
+}
+
+#left {
+	display: none;
+	visibility: hidden;
+}
+
+#main {
+	width: 100%;
+	float: left;
+	clear: both;
+	margin-top: 0px;
+}
+
+#leftMenu {
+	display: none;
+	visibility: hidden;
+}
+
+#mainContent {
+	width: 100%;
+	float: left;
+}
+
+#rightMenu {
+	display: none;
+	visibility: hidden;
+}
+
+#mainContentWide {
+	width: 100%;
+	float: left;
+	padding-left: 15px;
+}
+
+div.jezyki 
+{
+    display: none;
+	visibility: hidden; 
+}
+
+/*---------------------------------ARTICLES --------------------------------------------*/
+
+#articles {width: 100%; margin: 0px auto; margin-bottom: 15px; color: #777; font-size: 14px;}
+div.articlesHeader {
+	color: #155a91;
+	font-size: 15px;
+	letter-spacing: -1px;
+	font-weight: bold;
+	text-transform: uppercase;
+	text-align: center;
+}
+#articles div.articlesContent {width: 450px !important; width: 430px; margin: 15px 15px !important; margin: 15px 9px;}
+#articles div.articleBox {clear: both; margin-bottom: 10px;}
+
+#articles div.artShortHeader {clear: both; overflow: hidden;}
+#articles div.artShortHLeft {display: inline; float: left; width: 180px !important; width: 170px; color: #eb4026; font-size: 14px; font-weight: bold;}
+#articles div.artShortHRight {display: inline; float: left; width: 270px !important; width: 260px;  font-size: 12px; font-weight: bold; padding-top: 7px;}
+#articles div.artShortMain {color: #555; font-size: 13px; font-weight: bold; margin-top: 12px;}
+
+#articles div.redLine {height: 1px; line-height: 1px; font-size: 1px; background-color: #eb4026; clear: both; margin-bottom: 4px;}
+#articles div.artShortMain a.readMore {
+	color: #444;
+	text-decoration: none;
+	font-size: 10px;
+	font-weight: normal;
+	float: right;
+	padding-bottom: 2px;
+
+	background-image: url(../img/bullet2.gif);
+	background-position: right center;
+	background-repeat: no-repeat;
+	padding-right: 16px;
+}
+#articles div.artShortMain a.readMore:hover {color: #155a91; font-weight: bold;}
+
+#pozostale 
+{
+	display: none;
+	visibility: hidden;
+}
+/*---------------------------------ARTICLES --------------------------------------------*/
+
+#footer {width: 80%; height: 90px; float: left; clear: both;}
+
+#footerBot {width: 100%; height: 26px; margin-top: 4px; float: left; clear: both;}
+
+/* ---------------------------------- BOTTOM MENU ------------------------------------------*/
+
+#footerTop 
+{
+	display: none;
+	visibility: hidden;
+}
+
+#footer a 
+{
+	color: #444;
+	text-decoration: none;
+}
+/* ---------------------------------- BOTTOM MENU ------------------------------------------*/
+
+/*--------------------------- KALKULATOR KOSZTOW --------------------------*/
+div.kalkulator2 div div.tp
+{
+	width: 277px;
+}
+
+table.kalkulator {
+	width: 400px;
+	border-collapse: collapse;
+	margin: 0px;
+	padding: 0px;
+	border: solid 1px dimgray;
+}
+table.kalkulator thead tr td, table.kalkulator tbody tr td, table.kalkulator tfoot tr td {
+	border-collapse: collapse;
+	margin: 0px;
+	padding: 3px;
+	border: solid 1px dimgray;
+	text-align: right;
+}
+table.kalkulator thead tr td {
+	text-align: center;
+	color: #3D3D3D;
+	font-weight: bold;
+	background-color: #CECECE;
+}
+table.kalkulator tfoot tr td {
+	font-weight: bold;
+}
+tr.alter, tr.alter td {
+	background-color: #E6E6E6!important;
+	
+}
+div.kalkulator, div.kalkulator2 {
+	padding: 7px;
+}
+div.kalkulator div {
+	height: 25px;
+}
+div.kalkulator div div { 
+	width: 140px;
+	float: left;
+	font-weight: bold;
+}
+div.kalkulator input.txt, div.kalkulator2 input.txt, div.kalkulator2 input.txt2 { 
+	border: solid 1px #928F84;
+	height: 17px;
+	padding: 1px;
+	line-height: 14px;
+	margin-bottom: 2px;
+	text-align: right;
+	background-color: #F6F5F0;
+}
+input.txt2 {
+	background-color: #EFEFEF;
+}
+input.txt, input.txt2 {
+	width: 90px;
+}
+div.kalkulator2 select {
+	font-size: 10px;
+}
+input.btn { 
+	padding: 3px;
+	font-weight: bold;
+	color: #ffffff;
+	width: 180px;
+	border-width: 0px;
+	background-color: #007cc4;
+	height: 25px;
+	text-transform: uppercase;
+	cursor: pointer;
+}
+div.kalkulator2 div {
+	height: 25px;
+}
+div.kalkulator2 div div { 
+	width: 330px;
+	float: left;
+	
+}
+div.kom2 {
+	font-size: 12px;
+	font-weight: bold;
+	text-align: center;
+	line-height: 20px;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+div.formwyszuk {
+	margin: 10px;
+}
+
+div.opcje a {
+	font-weight: bold;
+	font-size: 12px;
+}
+
+div.form {
+	margin-top: 15px;
+}
+div.tyt {
+	font-weight: bold;
+}
+div.tyt img {
+	cursor: pointer;
+	margin-top: 1px;
+	margin-right: 3px;
+	margin-left: 3px;
+}
+div.lista3 input {
+	font-size: 11px;
+	padding: 1px;
+	padding-left: 4px;
+	padding-top: 4px;
+	border: solid 1px #B7B5AE; 
+	background-color: #F6F5F0;
+	width: 250px;
+	margin-top: 2px;
+}
+div.lista {
+	height: 150px;
+	width: 144px;
+	overflow: auto;
+	margin-bottom: 10px;
+	border: solid 1px #B7B5AE; 
+}
+div.lista label {
+	white-space: nowrap;
+}
+
+div.Zgloszenia {
+	margin-top: 5px;
+}
+div.Zgloszenia img {
+	border-width: 0px;
+}
+/*--------------------------- KALKULATOR KOSZTOW --------------------------*/
+/*-------------------------- OFERTA -----------------------------------*/
+div.ofertasprzedana
+{
+	display: block;
+	clear: both;
+	height: 20px;
+	width: 100%;
+	color: #bb3333;
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+	padding-top: 10px;
+}
+
+tr.sprzedana 
+{
+	color: #bb3333;
+}
+
+div.czescofertyoff {
+	display: block;
+}
+div.blok table {
+	width: 400px;
+	margin: 0px;
+	border-collapse: separate;
+}
+
+div.blok2 
+{
+	width: 300px;
+}
+div.blok2 table {
+	width: 300px;
+	margin: 0px;
+	border-collapse: separate;
+}
+div.blok table tr td, div.blok2 table tr td {
+	margin: 0px;
+	padding: 1px;
+	vertical-align: top;
+	font-family: Verdana;
+	font-size: 12px;
+	padding-left: 4px;
+	
+}
+div.blok table tr td.t, div.blok2 table tr td.t{
+	height: 16px;
+	background:#efedee;
+	width: 170px;
+	vertical-align: middle;
+	font-weight: bold;
+	color:#71797b;
+}
+div.foto {
+	padding: 1px!important;
+	border: solid 1px #ADADAD;
+	width: 190px;
+	margin-bottom: 2px;
+}
+img.fotos {
+	margin: 1px;
+	padding: 2px; 
+	border: solid 1px #9CA2AD;
+	cursor: pointer;
+}
+div.galeria {
+	height: 400px;	
+	width: 220px;
+	overflow: hidden;
+	text-align: center;
+}
+div.galeria img {
+	cursor: pointer;
+}
+div.scroll1, div.scroll2 {
+	height: 18px;
+	width: 200px;
+	padding: 0px;
+	margin: 3px 0px 3px 0px;
+	cursor: pointer;
+	background-color: #D0D0D0;
+	background-image: url(../../grafika/pix5.gif);
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+div.scroll2 {
+	background-image: url(../../grafika/pix6.gif);
+}
+div.frmkontakt {
+	margin: 5px;
+
+}
+div.frmkontakt div {
+	float: left;
+	width: 130px;
+}
+
+input.frm, select.frm {
+	font-size: 12px;
+	padding-left: 4px;
+	padding-top: 4px;
+	border: solid 1px #B7B5AE; 
+	background-color: #F6F5F0;
+	width: 150px;
+	margin-top: 2px;
+}
+
+div.frmkontakt input, div.frmkontakt textarea {
+	font-size: 12px;
+	padding-left: 4px;
+	padding-top: 4px;
+	border: solid 1px #B7B5AE; 
+	background-color: #F6F5F0;
+	width: 150px;
+	margin-top: 2px;
+}
+div.frmkontakt textarea {
+	width: 250px;
+	height: 60px;
+}
+
+a.link7, a.link7a, link7:hover
+{
+	color: #155a91;
+	font-weight: bold;
+	font-size: 13px;
+	text-decoration: none;
+	margin-top: 6px;
+	margin-bottom: 6px;
+	display: block;
+}
+
+a.link7a:hover {
+	color: #eb4026;
+	
+	background-image: url(../img/bullet3.gif);
+	background-position: left center;
+	background-repeat: no-repeat;
+	padding-left: 20px;
+}
+
+a.link5
+{
+	color: #155a91;
+	font-size: 12px;
+	text-decoration: none;
+	margin-left: 4px;
+}
+
+a.link5:hover {color: #eb4026;}
+
+div.decyzjaStopka a
+{
+	text-decoration: none;
+	font-size: 12px;
+	font-weight: bold;
+	color: #155a91;
+}
+
+div.decyzjaStopka a:hover {color: #eb4026;}
+
+div.uwaga {
+	font-size: 14px;
+	color: #155a91;
+	margin-top: 20px;
+	text-align: center;
+}
+/*-------------------------- OFERTA -----------------------------------*/
+/* ------------------  WYNIKI WYSZUKIWANIA -----------------------*/
+table.wyszukane {
+	width: 670px !important;
+	width: 650px;
+	empty-cells:show;
+	font-size: 14px;
+}
+table.wyszukane td.cenaM2 
+{
+	width: 60px;
+}
+
+table.wyszukane thead tr td, table.wyszukane tbody tr td  {
+	padding: 2px;
+	vertical-align: middle;
+	border: solid 1px silver;
+}
+table.wyszukane thead tr td {
+	text-align: center;
+	height: 20px;
+	background-color: #e7e7e7;
+}
+table.wyszukane tbody tr td {
+	cursor: pointer;	
+	text-align: center;
+}
+
+table.wyszukane a {
+	cursor: pointer;	
+	text-decoration: none;
+	color: #771;
+}
+
+/* ------------------  WYNIKI WYSZUKIWANIA -----------------------*/ div.WydrukNotatnikNaglowek
+{
+
+}
+div.WydrukNotatnik .Cena
+{
+
+}
+div.WydrukNotatnik table.WydrukNotatnikTabela
+{
+     width: 100%;
+}
+div.WydrukNotatnik table.WydrukNotatnikTabela th
+{
+     background: red;
+     color: #FFFFFF;
+     font-weight: bold;
+}
+div.WydrukNotatnik table.WydrukNotatnikTabela tr.WierszNieparzysty td
+{
+     background: #FFFFFF;
+     color: #333333;
+}
+div.WydrukNotatnik table.WydrukNotatnikTabela tr.WierszParzysty td
+{
+     background: #BBBBBB;
+     color: #333333;
+}

@@ -1,0 +1,5 @@
+RewriteEngine on
+
+# virtual
+RewriteCond %{REQUEST_URI} ^/virtual(.*)
+RewriteRule ^virtual/(.*)$ virtual.php/$1 [L]
