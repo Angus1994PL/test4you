@@ -1,0 +1,24 @@
+# Environment configuration (contains sensitive credentials)
+.env
+
+# Compiled Smarty templates
+templates_c/
+
+# Logs
+virgo_api/logs/*.log
+
+# Cache files
+virgo_api/*.bin
+
+# ZIP archives
+*.zip
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo

@@ -5,6 +5,26 @@ ini_set("max_execution_time", "1200");
 ini_set("max_input_time", "1200");
 ini_set("default_socket_timeout", "1200");
 
+// Load .env file if it exists (key=value format, one per line)
+$envFile = __DIR__ . '/../.env';
+if (file_exists($envFile)) {
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if ($line === '' || $line[0] === '#') {
+            continue;
+        }
+        $eqPos = strpos($line, '=');
+        if ($eqPos !== false) {
+            $key = trim(substr($line, 0, $eqPos));
+            $value = trim(substr($line, $eqPos + 1));
+            if (!getenv($key)) {
+                putenv("$key=$value");
+            }
+        }
+    }
+}
+
 /**
  * Class containig all configuration switches.
  * @author Jakub Konieczka
@@ -23,7 +43,7 @@ class Config{
      * Determines php framework used.
      * @var string
      */
-    public static $Framework = self::FRAMEWORK_CODEIGNITER;
+    public static $Framework = self::FRAMEWORK_DEFAULT;
 
 	/**
 	 * Database server address.
@@ -54,7 +74,7 @@ class Config{
 	 * User password to database.
 	 * @var string
 	 */
-	public static $Password = "admin";
+	public static $Password = "";
 	/**
 	 * Flag-speaking a type of supported database.
 	 * @var string
@@ -69,12 +89,12 @@ class Config{
 	 * API identification key.
 	 * @var string
 	 */
-	public static $WebKey = "b9fe1604-a038-4404-afcb-2aac99bd23eb";
+	public static $WebKey = "5dea1029-c346-4f4c-93ae-84be44bb3f8b";
     /**
      * Domain of Galactica application
      * @var string
      */
-    public static $GalAppDomain = "http://demovirgo.galapp.net";
+    public static $GalAppDomain = "https://sl.galapp.net";
 
     /**
 	 * Path of application directory.
@@ -180,4 +200,39 @@ class Config{
      * @var int
      */
     public static $defaultLanguageId = 1045;
+
+    /**
+     * Initialize configuration from environment variables (.env file).
+     */
+    public static function loadFromEnv() {
+        $env = getenv('VIRGO_DB_HOST');
+        if ($env !== false) self::$Server = $env;
+
+        $env = getenv('VIRGO_DB_PORT');
+        if ($env !== false) self::$Port = (int)$env;
+
+        $env = getenv('VIRGO_DB_NAME');
+        if ($env !== false) self::$DbName = $env;
+
+        $env = getenv('VIRGO_DB_USER');
+        if ($env !== false) self::$UserName = $env;
+
+        $env = getenv('VIRGO_DB_PASS');
+        if ($env !== false) self::$Password = $env;
+
+        $env = getenv('VIRGO_WEBSERVICE_URL');
+        if ($env !== false) self::$WebServiceUrl = $env;
+
+        $env = getenv('VIRGO_WEB_KEY');
+        if ($env !== false) self::$WebKey = $env;
+
+        $env = getenv('VIRGO_GAL_APP_DOMAIN');
+        if ($env !== false) self::$GalAppDomain = $env;
+
+        $env = getenv('VIRGO_SYNC_INTERVAL');
+        if ($env !== false) self::$DataSynchronizationInterval = (int)$env;
+    }
 }
+
+// Load environment variables into Config
+Config::loadFromEnv();
